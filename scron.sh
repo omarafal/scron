@@ -5,7 +5,7 @@
 which crontab >> ./scron.log 2>&1
 doescron=$?
 
-if [ ! $doescron -eq 0 ] 
+if (( $doescron != 0 )) 
 #if which crontab >> ./scron.log 2>&1
 then
 	echo "crontab is not installed."
@@ -18,16 +18,20 @@ then
 		
 		which apt >> ./scron.log 2>&1
 		doesapt=$?
-		if [ $doesapt -eq 0 ]
+
+		if (( $doesapt == 0 ))
 		then
-			echo "Installing crontab."
+			echo "Found apt."
+			echo "Installing crontab. Don't forget to update your packages."
 			sudo apt -y install crontab
 		else
 			which pacman >> ./scron.log 2>&1
 			doespac=$?
-			if [ $doespac -eq 0 ]
+			
+			if (( $doespac == 0 ))
 			then
-				echo "Installing crontab."
+				echo "Found pacman."
+				echo "Installing crontab. Don't forget to update your packages."
 				sudo pacman -S --noconfirm cronie
 			else
 				echo "No supported package manager found, exiting."
@@ -35,7 +39,8 @@ then
 			fi
 		fi
 	else
-		echo "cron not installed, aborting scron."
+		echo "cron not installed, stopping scron."
+		exit
 	fi
 
 fi
