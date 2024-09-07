@@ -2,7 +2,11 @@
 
 # TRY TO FIND A REPLACEMENT FOR REPTITIVE WHICH COMMANDS
 
-which crontab >> ./scron.log 2>&1
+# start logging
+logFile=./logs/scron.log
+echo "$(date +'[%a %I:%M:%S]')" >> $logFile
+
+which crontab >> $logFile 2>&1
 doescron=$?
 
 if (( $doescron != 0 )) 
@@ -16,7 +20,7 @@ then
 		# check package managers (apt then pacman)
 		echo "Checking available package managers..."
 		
-		which apt >> ./scron.log 2>&1
+		which apt >> $logFile 2>&1
 		doesapt=$?
 
 		if (( $doesapt == 0 ))
@@ -25,7 +29,7 @@ then
 			echo "Installing crontab. Don't forget to update your packages."
 			sudo apt -y install crontab
 		else
-			which pacman >> ./scron.log 2>&1
+			which pacman >> $logFile 2>&1
 			doespac=$?
 			
 			if (( $doespac == 0 ))
