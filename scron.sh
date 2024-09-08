@@ -6,6 +6,8 @@
 logFile=./logs/scron.log
 echo "$(date +'[%a %I:%M:%S]')" >> $logFile
 
+# THE NEXT PART IS INTENDED IF THE SOURCE CODE WAS INSTALLED DIRECTLY, NOT NEEDED IF SCRON WAS INSTALLED USING A PACKAGE MANAGER FOR DEPENDENCIES
+
 which crontab >> $logFile 2>&1
 doescron=$?
 
@@ -27,7 +29,7 @@ then
 		then
 			echo "Found apt."
 			echo "Installing crontab. Don't forget to update your packages."
-			sudo apt -y install crontab
+			apt -y install crontab
 		else
 			which pacman >> $logFile 2>&1
 			doespac=$?
@@ -36,7 +38,7 @@ then
 			then
 				echo "Found pacman."
 				echo "Installing crontab. Don't forget to update your packages."
-				sudo pacman -S --noconfirm cronie
+				pacman -S --noconfirm cronie
 			else
 				echo "No supported package manager found, exiting."
 				exit
