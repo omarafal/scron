@@ -1,0 +1,18 @@
+#!/bin/bash
+
+print_help() {
+	echo "Correct usage:"
+	echo -e "scron [OPTION]\n"
+	echo "Options"
+	echo -e "  -h\tdisplay help menu"
+}
+
+
+while getopts ":h" opt
+do
+	case $opt in
+		h) print_help;;
+		:) echo "[ERROR] scron -$OPTARG requires argument(s)";;
+		\?) echo -e "[ERROR] Invalid option\n" && print_help
+	esac
+done
