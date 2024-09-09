@@ -4,7 +4,7 @@ content = sys.stdin.read()
 
 lines = content.split("\n")
 
-with open("cmds.tmp", "w") as f1, open("current_cmds.scron", "a") as f2:
+with open("./c/cmds.tmp", "w") as f1, open("./c/current_cmds.scron", "a") as f2:
     for line in lines:
         # ignore empty lines:
         if line.strip() != "":
