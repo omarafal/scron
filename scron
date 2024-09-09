@@ -4,9 +4,11 @@
 print_help() {
 	echo "Correct usage:"
 	echo -e "scron [OPTION]\n"
-	echo "Options"
+	echo "Options:"
 	echo -e "  -h\tdisplay help menu"
 	echo -e "  -f\tspecify commands file"
+	echo -e "  -p\tpurge; empty ALL scheduled commands"
+	echo -e "  -l\tlist scheduled commands"
 }
 
 # handle commands file
@@ -23,11 +25,13 @@ file(){
 }
 
 # options
-while getopts ":hf:" opt
+while getopts ":hf:pl" opt
 do
 	case $opt in
 		h) print_help;;
 		f) file $OPTARG;;
+		p) crontab -r;;
+		l) cat $(dirname $0)/current_cmds.scron;;
 		:) echo "[ERROR] scron -$OPTARG requires argument(s)";;
 		\?) echo -e "[ERROR] Invalid option\n" && print_help;;
 		*) echo "Error"
