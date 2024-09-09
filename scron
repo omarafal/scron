@@ -9,10 +9,18 @@ print_help() {
 	echo -e "  -f\tspecify commands file"
 	echo -e "  -p\tpurge; empty ALL scheduled commands"
 	echo -e "  -l\tlist scheduled commands"
+	echo -e "  -t\tset time for scheduled commands"
+	#echo "\n"	
+	#echo "Example time formats:"
+	#echo "23 Jan @ 8:30 PM -> runs every 23rd of January on 8:30 pm."
+	#echo "23 @ 8:30 PM -> runs every 23rd of every month on 8:30 pm."  
+	#echo "Sat Jan @ 8:30 PM -> runs every Saturday of every month on 8:30 pm."
+	#echo "Sat @ 8:30 PM -> runs every Saturday of every month on 8:30 pm."
+      	#please refer to the man page or documentation	
 }
 
 # handle commands file
-file(){
+set_cmds(){
 	#cat $1
 	if [ -f $1 ]
 	then
@@ -24,16 +32,32 @@ file(){
 
 }
 
+# variables
+time=null
+file=null
+
+
 # options
-while getopts ":hf:pl" opt
+while getopts ":hf:plt:" opt
 do
 	case $opt in
 		h) print_help;;
-		f) file $OPTARG;;
+		f) file=$OPTARG;;
 		p) crontab -r;;
 		l) cat $(dirname $0)/current_cmds.scron;;
-		:) echo "[ERROR] scron -$OPTARG requires argument(s)";;
-		\?) echo -e "[ERROR] Invalid option\n" && print_help;;
+		t) time=$OPTARG;;
+		:) echo "[ERROR] scron -$OPTARG requires argument(s)" && exit;;
+		\?) echo -e "[ERROR] Invalid option\n" && print_help && exit;;
 		*) echo "Error"
 	esac
 done
+
+# check variables are set
+if [[ $file == null || $time == null ]]
+then
+	echo "[ERROR] Missing file or time arguments."
+	echo "Example usage: scron -t \"23 Jan @ 8:30 AM\" -f file.txt "
+	exit
+fi
+
+#set_cmds $file $time
