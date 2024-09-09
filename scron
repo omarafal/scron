@@ -1,18 +1,30 @@
 #!/bin/bash
 
+# help menu
 print_help() {
 	echo "Correct usage:"
 	echo -e "scron [OPTION]\n"
 	echo "Options"
 	echo -e "  -h\tdisplay help menu"
+	echo -e "  -f\tspecify commands file"
 }
 
+# handle commands file
+file(){
+	if [ -f $1 ]
+	then
+		cat $1
+	fi
+}
 
-while getopts ":h" opt
+# options
+while getopts ":hf:" opt
 do
 	case $opt in
 		h) print_help;;
+		f) file $OPTARG;;
 		:) echo "[ERROR] scron -$OPTARG requires argument(s)";;
-		\?) echo -e "[ERROR] Invalid option\n" && print_help
+		\?) echo -e "[ERROR] Invalid option\n" && print_help;;
+		*) echo "Error"
 	esac
 done
