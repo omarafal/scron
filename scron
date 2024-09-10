@@ -10,6 +10,8 @@ print_help() {
 	echo -e "  -p\tpurge; empty ALL scheduled commands"
 	echo -e "  -l\tlist scheduled commands"
 	echo -e "  -t\tset time for scheduled commands"
+	echo -e "  -c\tschedule a single command"
+	echo -e "  -r\trestore the crontab file to the last state it was in"
 	exit
 	#echo "\n"
 	#echo "Example time formats:"
@@ -17,7 +19,8 @@ print_help() {
 	#echo "23 @ 8:30 PM -> runs every 23rd of every month on 8:30 pm."  
 	#echo "Sat Jan @ 8:30 PM -> runs every Saturday of every month on 8:30 pm."
 	#echo "Sat @ 8:30 PM -> runs every Saturday of every month on 8:30 pm."
-      	#please refer to the man page or documentation	
+      	#please refer to the man page or documentation
+	# scron is not responsible for command syntax or date correctness (eg: 31 Sept which doesn't exist)	
 }
 
 # handle commands file
