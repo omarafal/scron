@@ -22,10 +22,14 @@ print_help() {
 # handle commands file
 set_cmds(){
 	#cat $1
+	#file_content=$(cat $1)
+	#echo $file_content
 	if [ -f $1 ]
 	then
-		#echo "File exists."
-		cat $1 | python3 $(dirname $0)/parse_content.py
+		echo "File exists."
+		#cat $1 | python3 $(dirname $0)/parse_content.py
+		# send file name and time to python
+		python3 $(dirname $0)/parse_content.py $1 $2
 	else
 		echo "[ERROR] No such file found."
 	fi
@@ -60,4 +64,4 @@ then
 	exit
 fi
 
-#set_cmds $file $time
+set_cmds $file $time
