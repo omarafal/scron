@@ -10,7 +10,8 @@ print_help() {
 	echo -e "  -p\tpurge; empty ALL scheduled commands"
 	echo -e "  -l\tlist scheduled commands"
 	echo -e "  -t\tset time for scheduled commands"
-	#echo "\n"	
+	exit
+	#echo "\n"
 	#echo "Example time formats:"
 	#echo "23 Jan @ 8:30 PM -> runs every 23rd of January on 8:30 pm."
 	#echo "23 @ 8:30 PM -> runs every 23rd of every month on 8:30 pm."  
@@ -26,12 +27,13 @@ set_cmds(){
 	#echo $file_content
 	if [ -f $1 ]
 	then
-		echo "File exists."
+		#echo "File exists."
 		#cat $1 | python3 $(dirname $0)/parse_content.py
 		# send file name and time to python
 		python3 $(dirname $0)/parse_content.py $1 $2
 	else
 		echo "[ERROR] No such file found."
+		exit
 	fi
 
 }
