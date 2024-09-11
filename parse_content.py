@@ -8,7 +8,7 @@ time = sys.argv[2].lower()
 time_list =  ["*", "*", "*", "*", "*"]
 
 days_list =  ["sun", "mon", "tue", "wed", "thu", "fri", "sat"]
-months_list = ["jan", "feb", "mar", "apr", "may", "Jjun", "jul", "aug", "sep", "oct", "nov", "dec"]
+months_list = ["" ,"jan", "feb", "mar", "apr", "may", "Jjun", "jul", "aug", "sep", "oct", "nov", "dec"]
 
 # read lines from file
 with open(file, "r") as read_file:
@@ -85,10 +85,25 @@ if spls_half[1] != "am" and spls_half[1] != "pm":
     print("[ERROR] Wrong timing format.\nExample usage: scron -t \"23 Jan @ 8:30 AM\" -f file.txt")
     exit()
 
-period = 0 if spls_half[1] == "AM" else 1
+period = 0 if spls_half[1] == "am" else 12
+clock = spls_half[0].split(":")
 
+# check the time
+if len(clock) != 2:
+    print("[ERROR] Wrong timing format.\nExample usage: scron -t \"23 Jan @ 8:30 AM\" -f file.txt")
+    exit()
 
+hour = int(clock[0])
+minute = int(clock[1])
 
+if hour not in range(0, 12) or minute not in range(0, 60):
+    print("[ERROR] Wrong timing format.\nExample usage: scron -t \"23 Jan @ 8:30 AM\" -f file.txt")
+    exit()
+
+time_list[0] = str(minute)
+time_list[1] = str(hour + period)
+
+print(f"Final form: {" ".join(time_list)}")
 
 """
 # prepare commands and write them to files
