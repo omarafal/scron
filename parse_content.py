@@ -96,15 +96,21 @@ if len(clock) != 2:
 hour = int(clock[0])
 minute = int(clock[1])
 
-if hour not in range(0, 12) or minute not in range(0, 60):
+if hour not in range(1, 13) or minute not in range(0, 60):
     print("[ERROR] Wrong timing format.\nExample usage: scron -t \"23 Jan @ 8:30 AM\" -f file.txt")
     exit()
 
 time_list[0] = str(minute)
-time_list[1] = str(hour + period)
+
+if hour == 12:
+    if period == "am":
+        time_list[1] = 0
+    else:
+        time_list[1] = 12
+else:
+    time_list[1] = str(hour + period)
 
 print(f"Final form: {" ".join(time_list)}")
-
 """
 # prepare commands and write them to files
 with open("./c/cmds.tmp", "w") as f1, open("./c/current_cmds.scron", "a") as f2:
@@ -114,9 +120,9 @@ with open("./c/cmds.tmp", "w") as f1, open("./c/current_cmds.scron", "a") as f2:
         # ignore empty lines:
         if line.strip() != "":
             #print(f"{line} >> ./logs/scron_commands.log\n")
-            f1.write(f"{line} >> ./logs/scron_output.log 2>> ./logs/scron_error.log\n")
+            f1.write(f"{" ".join(time_list)} {line} >> ./logs/scron_output.log 2>> ./logs/scron_error.log\n")
 
             # add commands to list of commands disregarding the logging part
             # used for -l option
             f2.write(f"{line}\n")
-   """         
+"""
