@@ -8,6 +8,7 @@ time = sys.argv[2]
 time_list =  ["*", "*", "*", "*", "*"]
 
 days_list =  ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+months_list = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 
 # read lines from file
 with open(file, "r") as read_file:
@@ -32,18 +33,44 @@ if len(splf_half) == 1:
     if splf_half[0] in [str(x) for x in range(1, 32)]:
         #print("This is a number")
         time_list[2] = splf_half[0]
-        #print(f"{" ".join(time_list)}")
-        #pass
     elif splf_half[0] in days_list:
         #print("This is a day of the week")
         time_list[4] = str(days_list.index(splf_half[0]))
-        print(f"{" ".join(time_list)}")
-        pass
+    elif splf_half[0] in months_list:
+        #print("This is a day of the month")
+        time_list[3] = str(months_list.index(splf_half[0]))
+    else:
+        print("[ERROR] Wrong timing format.\nExample usage: scron -t \"23 Jan @ 8:30 AM\" -f file.txt")
+        exit()
+
+elif len(splf_half) == 2:
+    # check first half
+    # either a number (1-31) or day (Sun, Mon, Tue, Wed, Thu, Fri, Sat)
+    if splf_half[0] in [str(x) for x in range(1, 32)]:
+        #print("This is a number")
+        time_list[2] = splf_half[0]
+    elif splf_half[0] in days_list:
+        #print("This is a day of the week")
+        time_list[4] = str(days_list.index(splf_half[0]))
+    else:
+        print("[ERROR] Wrong timing format.\nExample usage: scron -t \"23 Jan @ 8:30 AM\" -f file.txt")
+        exit()
+
+    # check second half
+    if splf_half[1] in months_list:
+        #print("This is a day of the month")
+        time_list[3] = str(months_list.index(splf_half[1]))
+
     else:
         print("[ERROR] Wrong timing format.\nExample usage: scron -t \"23 Jan @ 8:30 AM\" -f file.txt")
         exit()
 
 
+else:
+    print("[ERROR] Wrong timing format.\nExample usage: scron -t \"23 Jan @ 8:30 AM\" -f file.txt")
+    exit()
+
+print(f"{" ".join(time_list)}")
 """
 # prepare commands and write them to files
 with open("./c/cmds.tmp", "w") as f1, open("./c/current_cmds.scron", "a") as f2:

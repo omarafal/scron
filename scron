@@ -21,7 +21,8 @@ print_help() {
 	#echo "Sat @ 8:30 PM -> runs every Saturday of every month on 8:30 pm."
       	#please refer to the man page or documentation
 	# scron is not responsible for command syntax or date correctness (eg: 31 Sept which doesn't exist)
-	# echo "Sat @ every-day also every-boot, every-minute, every-hour"	
+	# echo "Sat @ every-day also every-boot, every-minute, every-hour"
+	# echo "Jun @ time" means every day for the month of Jun	
 }
 
 # handle commands file
