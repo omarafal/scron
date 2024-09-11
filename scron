@@ -20,7 +20,8 @@ print_help() {
 	#echo "Sat Jan @ 8:30 PM -> runs every Saturday of every month on 8:30 pm."
 	#echo "Sat @ 8:30 PM -> runs every Saturday of every month on 8:30 pm."
       	#please refer to the man page or documentation
-	# scron is not responsible for command syntax or date correctness (eg: 31 Sept which doesn't exist)	
+	# scron is not responsible for command syntax or date correctness (eg: 31 Sept which doesn't exist)
+	# echo "Sat @ every-day also every-boot, every-minute, every-hour"	
 }
 
 # handle commands file
@@ -33,7 +34,7 @@ set_cmds(){
 		#echo "File exists."
 		#cat $1 | python3 $(dirname $0)/parse_content.py
 		# send file name and time to python
-		python3 $(dirname $0)/parse_content.py $1 $2
+		python3 $(dirname $0)/parse_content.py $1 "$2"
 	else
 		echo "[ERROR] No such file found."
 		exit
@@ -69,4 +70,4 @@ then
 	exit
 fi
 
-set_cmds $file $time
+set_cmds $file "$time"
