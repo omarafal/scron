@@ -70,7 +70,26 @@ else:
     print("[ERROR] Wrong timing format.\nExample usage: scron -t \"23 Jan @ 8:30 AM\" -f file.txt")
     exit()
 
-print(f"{" ".join(time_list)}")
+#print(f"{" ".join(time_list)}")
+
+# parse second half
+# split second half
+spls_half = s_half.split()
+
+if len(spls_half) != 2:
+    print("[ERROR] Wrong timing format.\nExample usage: scron -t \"23 Jan @ 8:30 AM\" -f file.txt")
+    exit()
+
+# check for am or pm
+if spls_half[1] != "am" && spls_half[1] != "pm":
+    print("[ERROR] Wrong timing format.\nExample usage: scron -t \"23 Jan @ 8:30 AM\" -f file.txt")
+    exit()
+
+period = 0 if spls_half[1] == "AM" else 1
+
+
+
+
 """
 # prepare commands and write them to files
 with open("./c/cmds.tmp", "w") as f1, open("./c/current_cmds.scron", "a") as f2:
