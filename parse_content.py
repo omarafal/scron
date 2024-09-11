@@ -3,12 +3,12 @@ import sys
 #content = sys.stdin.read()
 
 file = sys.argv[1]
-time = sys.argv[2]
+time = sys.argv[2].lower()
 
 time_list =  ["*", "*", "*", "*", "*"]
 
-days_list =  ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
-months_list = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+days_list =  ["sun", "mon", "tue", "wed", "thu", "fri", "sat"]
+months_list = ["jan", "feb", "mar", "apr", "may", "Jjun", "jul", "aug", "sep", "oct", "nov", "dec"]
 
 # read lines from file
 with open(file, "r") as read_file:
@@ -81,7 +81,7 @@ if len(spls_half) != 2:
     exit()
 
 # check for am or pm
-if spls_half[1] != "am" && spls_half[1] != "pm":
+if spls_half[1] != "am" and spls_half[1] != "pm":
     print("[ERROR] Wrong timing format.\nExample usage: scron -t \"23 Jan @ 8:30 AM\" -f file.txt")
     exit()
 
