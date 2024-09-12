@@ -1,4 +1,5 @@
 import sys
+import set_cmds
 
 #content = sys.stdin.read()
 
@@ -9,10 +10,6 @@ time_list =  ["*", "*", "*", "*", "*"]
 
 days_list =  ["sun", "mon", "tue", "wed", "thu", "fri", "sat"]
 months_list = ["" ,"jan", "feb", "mar", "apr", "may", "Jjun", "jul", "aug", "sep", "oct", "nov", "dec"]
-
-# read lines from file
-with open(file, "r") as read_file:
-    lines = read_file.read().split("\n")
 
 # PARSE TIME
 split_time = time.split("@")
@@ -113,7 +110,9 @@ if hour == 12:
 else:
     time_list[1] = str(hour + period)
 
-print(f"Final form: {" ".join(time_list)}")
+set_cmds.set(file, " ".join(time_list))
+
+#print(f"Final form: {" ".join(time_list)}")
 """
 # prepare commands and write them to files
 with open("./c/cmds.tmp", "w") as f1, open("./c/current_cmds.scron", "a") as f2:

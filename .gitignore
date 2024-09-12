@@ -1,2 +1,4 @@
 /logs/
 /c/
+/backups/*
+/__pycache__
