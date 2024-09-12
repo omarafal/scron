@@ -12,6 +12,7 @@ print_help() {
 	echo -e "  -t\tset time for scheduled commands"
 	echo -e "  -c\tschedule a single command"
 	echo -e "  -r\trestore the crontab file to the last state it was in"
+	echo -e "  -e\tevery; run command(s) every provided time"
 	exit
 	#echo "\n"
 	#echo "Example time formats:"
@@ -20,7 +21,7 @@ print_help() {
 	#echo "Sat Jan @ 8:30 PM -> runs every Saturday of every month on 8:30 pm."
 	#echo "Sat @ 8:30 PM -> runs every Saturday of every month on 8:30 pm."
       	#please refer to the man page or documentation
-	# scron is not responsible for command syntax or date correctness (eg: 31 Sept which doesn't exist)
+	# scron is not responsible for command syntax or date correctness (eg: 31 Sep which doesn't exist)
 	# echo "Sat @ every-day also every-boot, every-minute, every-hour"
 	# echo "Jun @ time" means every day for the month of Jun	
 }

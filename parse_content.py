@@ -30,9 +30,10 @@ splf_half = f_half.split()
 
 if len(splf_half) == 1:
     # either a number (1-31) or day (Sun, Mon, Tue, Wed, Thu, Fri, Sat)
-    if splf_half[0] in [str(x) for x in range(1, 32)]:
-        #print("This is a number")
-        time_list[2] = splf_half[0]
+    if splf_half[0].isdigit():
+        if int(splf_half[0]) in range(1, 32):
+            #print("This is a number")
+            time_list[2] = str(int(splf_half[0]))
     elif splf_half[0] in days_list:
         #print("This is a day of the week")
         time_list[4] = str(days_list.index(splf_half[0]))
@@ -46,9 +47,10 @@ if len(splf_half) == 1:
 elif len(splf_half) == 2:
     # check first half
     # either a number (1-31) or day (Sun, Mon, Tue, Wed, Thu, Fri, Sat)
-    if splf_half[0] in [str(x) for x in range(1, 32)]:
-        #print("This is a number")
-        time_list[2] = splf_half[0]
+    if splf_half[0].isdigit():
+        if int(splf_half[0]) in range(1, 32):
+            #print("This is a number")
+            time_list[2] = str(int(splf_half[0]))
     elif splf_half[0] in days_list:
         #print("This is a day of the week")
         time_list[4] = str(days_list.index(splf_half[0]))
@@ -103,10 +105,11 @@ if hour not in range(1, 13) or minute not in range(0, 60):
 time_list[0] = str(minute)
 
 if hour == 12:
-    if period == "am":
-        time_list[1] = 0
+    if period == 0:
+        time_list[1] = "0"
     else:
-        time_list[1] = 12
+        print(period)
+        time_list[1] = "12"
 else:
     time_list[1] = str(hour + period)
 
