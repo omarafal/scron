@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# start logging
+#log_file="$(dirname $0)/logs/scron.log"
+#date_format="$(date +'[%a %I:%M:%S]')" 
+#echo $date_format >> $log_file 2>>&1
+
 # help menu
 print_help() {
 	echo "Correct usage:"
@@ -24,6 +29,42 @@ print_help() {
 	# scron is not responsible for command syntax or date correctness (eg: 31 Sep which doesn't exist)
 	# echo "Sat @ every-day also every-boot, every-minute, every-hour"
 	# echo "Jun @ time" means every day for the month of Jun	
+}
+
+purge() {
+
+	crontab -r
+	
+	# if no crontab file found
+	if [ ! $? -eq 0 ]
+	then
+		exit
+	fi
+
+	verbose_clear=$(dirname $0)/commands/verbose_cmds.scron
+	short_clear=$(dirname $0)/commands/short_cmds.scron
+	
+	# prompt for confirmation and create backup
+	read -p "Are you sure you want to remove ALL the currently sgicheduled commands?(Y/n): " do_clear
+	
+	if [[ $do_clear != 'Y' ]]
+	then
+		echo "Aborting."
+		exit
+	fi
+	
+	if [ ! -d backups ]
+	then
+		mkdir $(dirname $0)/backups
+	fi
+
+	cp $verbose_clear $(dirname $0)/backups/$(date +%F).scron.bkup
+
+	truncate -s 0 $verbose_clear && truncate -s 0 $short_clear
+	 
+
+	echo "Created a backup for the last state."
+	echo "Successfully cleared the crontab file."
 }
 
 # handle commands file
@@ -55,12 +96,12 @@ do
 	case $opt in
 		h) print_help;;
 		f) file=$OPTARG;;
-		p) crontab -r;;
-		l) cat $(dirname $0)/current_cmds.scron;;
+		p) purge && exit;;
+		l) cat $(dirname $0)/c/short_cmds.scron && exit;;
 		t) time=$OPTARG;;
 		:) echo "[ERROR] scron -$OPTARG requires argument(s)" && exit;;
 		\?) echo -e "[ERROR] Invalid option\n" && print_help && exit;;
-		*) echo "Error"
+		*) echo "Error" && exit
 	esac
 done
 

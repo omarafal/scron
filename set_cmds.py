@@ -6,7 +6,7 @@ def set(file, time):
         lines = read_file.read().split("\n")
 
     # prepare commands and write them to files
-    with open("./c/cmds.tmp", "w") as f1, open("./c/current_cmds.scron", "a") as f2:
+    with open("./commands/verbose_cmds.scron", "w") as f1, open("./c/short_cmds.scron", "a") as f2:
         # log dates
         f1.write("date >> ./logs/scron_output.log && date >> ./logs/scron_error.log\n")
         
