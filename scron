@@ -1,9 +1,11 @@
 #!/bin/bash
 
 # start logging
-#log_file="$(dirname $0)/logs/scron.log"
+#log_file="$s_path/logs/scron.log"
 #date_format="$(date +'[%a %I:%M:%S]')" 
 #echo $date_format >> $log_file 2>>&1
+
+s_path=$(dirname $(realpath $0))
 
 # help menu
 print_help() {
@@ -41,8 +43,8 @@ purge() {
 		exit
 	fi
 
-	verbose_clear=$(dirname $0)/commands/verbose_cmds.scron
-	short_clear=$(dirname $0)/commands/short_cmds.scron
+	verbose_clear=$s_path/commands/verbose_cmds.scron
+	short_clear=$s_path/commands/short_cmds.scron
 	
 	# prompt for confirmation and create backup
 	read -p "Are you sure you want to remove ALL the currently sgicheduled commands?(Y/n): " do_clear
@@ -55,10 +57,10 @@ purge() {
 	
 	if [ ! -d backups ]
 	then
-		mkdir $(dirname $0)/backups
+		mkdir $s_path/backups
 	fi
 
-	cp $verbose_clear $(dirname $0)/backups/$(date +%F).scron.bkup
+	cp $verbose_clear $s_path/backups/$(date +%F).scron.bkup
 
 	truncate -s 0 $verbose_clear && truncate -s 0 $short_clear
 	 
@@ -71,25 +73,25 @@ purge() {
 set_cmds(){
 	#cat $1
 	#file_content=$(cat $1)
-	#echo $file_content
+
 	if [ -f $1 ]
 	then
 		#echo "File exists."
-		#cat $1 | python3 $(dirname $0)/parse_content.py
+		#cat $1 | python3 $s_path/parse_content.py
 		# send file name and time to python
-		python3 $(dirname $0)/parse_content.py $1 "$2"
+		python3 $s_path/parse_content.py $1 "$2" $3
 		#echo "EXIT CODE FROM PYTHON: $?"
 
 		if [ $? -eq 0 ]
 		then
-			crontab -T $(dirname $0)/commands/verbose_cmds.tmp >> /dev/null
+			crontab -T $s_path/commands/verbose_cmds.tmp >> /dev/null
 			# check if crontab is successful then copy to original files from temp
 			if [ $? -eq 0 ]
 			then
-				cat $(dirname $0)/commands/verbose_cmds.tmp >> $(dirname $0)/commands/verbose_cmds.scron
-				cat $(dirname $0)/commands/short_cmds.tmp >> $(dirname $0)/commands/short_cmds.scron
+				cat $s_path/commands/verbose_cmds.tmp >> $s_path/commands/verbose_cmds.scron
+				cat $s_path/commands/short_cmds.tmp >> $s_path/commands/short_cmds.scron
 				# now make crontab read the file
-				crontab $(dirname $0)/commands/verbose_cmds.scron
+				crontab $s_path/commands/verbose_cmds.scron
 			else
 				echo "[ERROR] Something went wrong, please check your commands' syntax."
 			fi
@@ -114,7 +116,7 @@ do
 		h) print_help;;
 		f) file=$OPTARG;;
 		p) purge; exit;;
-		l) cat $(dirname $0)/commands/short_cmds.scron; exit;;
+		l) cat $s_path/commands/short_cmds.scron; exit;;
 		t) time=$OPTARG;;
 		:) echo "[ERROR] scron -$OPTARG requires argument(s)"; exit;;
 		\?) echo -e "[ERROR] Invalid option\n" && print_help ; exit;;
@@ -130,4 +132,4 @@ then
 	exit
 fi
 
-set_cmds $file "$time"
+set_cmds $file "$time" $s_path

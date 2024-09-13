@@ -5,6 +5,7 @@ import set_cmds
 
 file = sys.argv[1]
 time = sys.argv[2].lower()
+directory = sys.argv[3]
 
 time_list =  ["*", "*", "*", "*", "*"]
 
@@ -110,6 +111,6 @@ if hour == 12:
 else:
     time_list[1] = str(hour + period)
 
-set_cmds.set(file, " ".join(time_list))
+set_cmds.set(file, " ".join(time_list), directory)
 
 #print(f"Final form: {" ".join(time_list)}")
