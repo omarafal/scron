@@ -35,11 +35,12 @@ print_help() {
 
 purge() {
 
-	crontab -r
-	
+	crontab -l > /dev/null 2>&1
+
 	# if no crontab file found
 	if [ ! $? -eq 0 ]
 	then
+		echo "No scheduled commands found for this user."
 		exit
 	fi
 
@@ -55,6 +56,8 @@ purge() {
 		exit
 	fi
 	
+	crontab -r
+
 	if [ ! -d backups ]
 	then
 		mkdir $s_path/backups
