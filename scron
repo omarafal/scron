@@ -7,6 +7,12 @@
 
 s_path=$(dirname $(realpath $0))
 
+# check if command directory exists
+if [ ! -d $s_path/commands ]
+then
+	mkdir $s_path/commands
+fi
+
 # help menu
 print_help() {
 	echo "Correct usage:"
@@ -40,7 +46,15 @@ purge() {
 	# if no crontab file found
 	if [ ! $? -eq 0 ]
 	then
-		echo "No scheduled commands in crontab found for this user, clearing scron files anyway."
+		scron -l > /dev/null
+
+		if [ $? -eq 0 ]
+		then
+
+			echo "No scheduled commands in crontab found for this user, clearing scron files anyway."
+		else
+			exit
+		fi
 		#exit
 	fi
 
@@ -56,7 +70,7 @@ purge() {
 		exit
 	fi
 	
-	crontab -r
+	crontab -r > /dev/null 2>&1
 
 	if [ ! -d backups ]
 	then
@@ -87,14 +101,16 @@ set_cmds(){
 
 		if [ $? -eq 0 ]
 		then
-			crontab -T $s_path/commands/verbose_cmds.tmp >> /dev/null
+			crontab -T $s_path/commands/verbose_cmds.tmp > /dev/null 2>&1
 			# check if crontab is successful then copy to original files from temp
 			if [ $? -eq 0 ]
 			then
 				cat $s_path/commands/verbose_cmds.tmp >> $s_path/commands/verbose_cmds.scron
 				cat $s_path/commands/short_cmds.tmp >> $s_path/commands/short_cmds.scron
 				# now make crontab read the file
-				crontab $s_path/commands/verbose_cmds.scron
+				crontab $s_path/commands/verbose_cmds.scron > /dev/null 2>&1
+				echo "Successfully scheduled provided commands."
+				echo "You can view all the scheduled commands by scron -l"
 			else
 				echo "[ERROR] Something went wrong, please check your commands' syntax."
 			fi
@@ -104,6 +120,21 @@ set_cmds(){
 		echo "[ERROR] No such file found."
 		exit
 	fi
+
+}
+
+list() {
+	
+
+	# check if file is empty
+	if [ ! -s $s_path/commands/short_cmds.scron ]
+	then
+		echo "No scheduled commands found in scron." >&2
+		exit 404
+	fi
+
+	
+	cat $s_path/commands/short_cmds.scron
 
 }
 
@@ -119,7 +150,7 @@ do
 		h) print_help;;
 		f) file=$OPTARG;;
 		p) purge; exit;;
-		l) cat $s_path/commands/short_cmds.scron; exit;;
+		l) list; exit;;
 		t) time=$OPTARG;;
 		:) echo "[ERROR] scron -$OPTARG requires argument(s)"; exit;;
 		\?) echo -e "[ERROR] Invalid option\n" && print_help ; exit;;
