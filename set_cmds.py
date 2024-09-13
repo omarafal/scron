@@ -6,9 +6,10 @@ def set(file, time):
         lines = read_file.read().split("\n")
 
     # prepare commands and write them to files
-    with open("./commands/verbose_cmds.scron", "w") as f1, open("./c/short_cmds.scron", "a") as f2:
+    # write to temp files first
+    with open("./commands/verbose_cmds.tmp", "w") as f1, open("./commands/short_cmds.tmp", "w") as f2:
         # log dates
-        f1.write("date >> ./logs/scron_output.log && date >> ./logs/scron_error.log\n")
+        f1.write(f"{time} date +'[%a %I:%M:%S]' >> ./logs/scron_output.log && date >> ./logs/scron_error.log\n")
         
         for line in lines:
             # ignore empty lines:
