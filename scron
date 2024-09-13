@@ -78,6 +78,23 @@ set_cmds(){
 		#cat $1 | python3 $(dirname $0)/parse_content.py
 		# send file name and time to python
 		python3 $(dirname $0)/parse_content.py $1 "$2"
+		#echo "EXIT CODE FROM PYTHON: $?"
+
+		if [ $? -eq 0 ]
+		then
+			crontab -T $(dirname $0)/commands/verbose_cmds.tmp >> /dev/null
+			# check if crontab is successful then copy to original files from temp
+			if [ $? -eq 0 ]
+			then
+				cat $(dirname $0)/commands/verbose_cmds.tmp >> $(dirname $0)/commands/verbose_cmds.scron
+				cat $(dirname $0)/commands/short_cmds.tmp >> $(dirname $0)/commands/short_cmds.scron
+				# now make crontab read the file
+				crontab $(dirname $0)/commands/verbose_cmds.scron
+			else
+				echo "[ERROR] Something went wrong, please check your commands' syntax."
+			fi
+			
+		fi
 	else
 		echo "[ERROR] No such file found."
 		exit
@@ -96,11 +113,11 @@ do
 	case $opt in
 		h) print_help;;
 		f) file=$OPTARG;;
-		p) purge && exit;;
-		l) cat $(dirname $0)/c/short_cmds.scron && exit;;
+		p) purge; exit;;
+		l) cat $(dirname $0)/commands/short_cmds.scron; exit;;
 		t) time=$OPTARG;;
-		:) echo "[ERROR] scron -$OPTARG requires argument(s)" && exit;;
-		\?) echo -e "[ERROR] Invalid option\n" && print_help && exit;;
+		:) echo "[ERROR] scron -$OPTARG requires argument(s)"; exit;;
+		\?) echo -e "[ERROR] Invalid option\n" && print_help ; exit;;
 		*) echo "Error" && exit
 	esac
 done

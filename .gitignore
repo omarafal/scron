@@ -2,3 +2,4 @@
 /commands/
 /backups/*
 /__pycache__
+/parse_every.py
