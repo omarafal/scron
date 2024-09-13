@@ -52,11 +52,7 @@ purge() {
 		then
 
 			echo "No scheduled commands in crontab found for this user, clearing scron files anyway."
-		else
-			echo "[ERROR] No scheduled commands found in scron."
-			exit 204
 		fi
-		#exit
 	fi
 
 	verbose_clear=$s_path/commands/verbose_cmds.scron
@@ -73,12 +69,22 @@ purge() {
 	
 	crontab -r > /dev/null 2>&1
 
-	if [ ! -d backups ]
+	if [ ! -d $s_path/backups ]
 	then
 		mkdir $s_path/backups
 	fi
+	
 
-	cp $verbose_clear $s_path/backups/$(date +%F).scron.bkup
+	# make a backup directory to store old files
+	backup_dir="$s_path/backups/$(date +'[%N]%F')"
+	
+	if [ ! -d $backup_dir ]
+	then
+		mkdir $backup_dir
+	fi
+
+	cp $verbose_clear $backup_dir/
+	cp $short_clear $backup_dir/
 
 	truncate -s 0 $verbose_clear && truncate -s 0 $short_clear
 	 
@@ -140,7 +146,7 @@ list() {
 
 	
 	cat $s_path/commands/short_cmds.scron
-
+	exit 0
 }
 
 # variables
