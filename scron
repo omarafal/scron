@@ -25,8 +25,8 @@ print_help() {
 	echo -e "  -t\tset time for scheduled commands"
 	echo -e "  -c\tschedule a single command"
 	echo -e "  -r\trestore the crontab file to the last state it was in"
-	echo -e "  -e\tevery; run command(s) every provided time"
-	exit
+	#echo -e "  -e\tevery; run command(s) every provided time"
+	
 	#echo "\n"
 	#echo "Example time formats:"
 	#echo "23 Jan @ 8:30 PM -> runs every 23rd of January on 8:30 pm."
@@ -53,7 +53,8 @@ purge() {
 
 			echo "No scheduled commands in crontab found for this user, clearing scron files anyway."
 		else
-			exit
+			echo "[ERROR] No scheduled commands found in scron."
+			exit 204
 		fi
 		#exit
 	fi
@@ -67,7 +68,7 @@ purge() {
 	if [[ $do_clear != 'Y' ]]
 	then
 		echo "Aborting."
-		exit
+		exit 101
 	fi
 	
 	crontab -r > /dev/null 2>&1
@@ -84,6 +85,8 @@ purge() {
 
 	echo "Created a backup for the last state."
 	echo "Successfully cleared the crontab file."
+
+	exit 0
 }
 
 # handle commands file
@@ -111,14 +114,16 @@ set_cmds(){
 				crontab $s_path/commands/verbose_cmds.scron > /dev/null 2>&1
 				echo "Successfully scheduled provided commands."
 				echo "You can view all the scheduled commands by scron -l"
+				exit 0
 			else
-				echo "[ERROR] Something went wrong, please check your commands' syntax."
+				echo "[ERROR] Something went wrong, please check your commands' syntax." >&2
+				exit 201
 			fi
 			
 		fi
 	else
-		echo "[ERROR] No such file found."
-		exit
+		echo "[ERROR] No such file found." >&2
+		exit 203
 	fi
 
 }
@@ -129,8 +134,8 @@ list() {
 	# check if file is empty
 	if [ ! -s $s_path/commands/short_cmds.scron ]
 	then
-		echo "No scheduled commands found in scron." >&2
-		exit 404
+		echo "[ERROR] No scheduled commands found in scron." >&2
+		exit 204
 	fi
 
 	
@@ -147,23 +152,23 @@ file=null
 while getopts ":hf:plt:" opt
 do
 	case $opt in
-		h) print_help;;
+		h) print_help && exit 0;;
 		f) file=$OPTARG;;
-		p) purge; exit;;
-		l) list; exit;;
+		p) purge;;
+		l) list;; 
 		t) time=$OPTARG;;
-		:) echo "[ERROR] scron -$OPTARG requires argument(s)"; exit;;
-		\?) echo -e "[ERROR] Invalid option\n" && print_help ; exit;;
-		*) echo "Error" && exit
+		:) echo "[ERROR] scron -$OPTARG requires argument(s)" >&2; exit 4 ;;
+		\?) echo -e "[ERROR] Invalid option\n" >&2 && print_help ; exit 1;;
+		*) echo "Error" && exit 255
 	esac
 done
 
 # check variables are set
 if [[ $file == null || $time == null ]]
 then
-	echo "[ERROR] Missing file or time arguments."
+	echo "[ERROR] Missing file or time arguments." >&2
 	echo "Example usage: scron -t \"23 Jan @ 8:30 AM\" -f file.txt "
-	exit
+	exit 2
 fi
 
 set_cmds $file "$time" $s_path

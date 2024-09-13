@@ -17,7 +17,7 @@ split_time = time.split("@")
 
 if len(split_time) != 2:
     print("[ERROR] Wrong timing format.\nExample usage: scron -t \"23 Jan @ 8:30 AM\" -f file.txt")
-    exit()
+    exit(200)
 
 f_half = split_time[0]
 s_half = split_time[1]
@@ -40,7 +40,7 @@ if len(splf_half) == 1:
         time_list[3] = str(months_list.index(splf_half[0]))
     else:
         print("[ERROR] Wrong timing format.\nExample usage: scron -t \"23 Jan @ 8:30 AM\" -f file.txt")
-        exit()
+        exit(200)
 
 elif len(splf_half) == 2:
     # check first half
@@ -54,7 +54,7 @@ elif len(splf_half) == 2:
         time_list[4] = str(days_list.index(splf_half[0]))
     else:
         print("[ERROR] Wrong timing format.\nExample usage: scron -t \"23 Jan @ 8:30 AM\" -f file.txt")
-        exit()
+        exit(200)
 
     # check second half
     if splf_half[1] in months_list:
@@ -63,12 +63,12 @@ elif len(splf_half) == 2:
 
     else:
         print("[ERROR] Wrong timing format.\nExample usage: scron -t \"23 Jan @ 8:30 AM\" -f file.txt")
-        exit()
+        exit(200)
 
 
 else:
     print("[ERROR] Wrong timing format.\nExample usage: scron -t \"23 Jan @ 8:30 AM\" -f file.txt")
-    exit()
+    exit(200)
 
 #print(f"{" ".join(time_list)}")
 
@@ -78,12 +78,12 @@ spls_half = s_half.split()
 
 if len(spls_half) != 2:
     print("[ERROR] Wrong timing format.\nExample usage: scron -t \"23 Jan @ 8:30 AM\" -f file.txt")
-    exit()
+    exit(200)
 
 # check for am or pm
 if spls_half[1] != "am" and spls_half[1] != "pm":
     print("[ERROR] Wrong timing format.\nExample usage: scron -t \"23 Jan @ 8:30 AM\" -f file.txt")
-    exit()
+    exit(200)
 
 period = 0 if spls_half[1] == "am" else 12
 clock = spls_half[0].split(":")
@@ -91,14 +91,14 @@ clock = spls_half[0].split(":")
 # check the time
 if len(clock) != 2:
     print("[ERROR] Wrong timing format.\nExample usage: scron -t \"23 Jan @ 8:30 AM\" -f file.txt")
-    exit()
+    exit(200)
 
 hour = int(clock[0])
 minute = int(clock[1])
 
 if hour not in range(1, 13) or minute not in range(0, 60):
     print("[ERROR] Wrong timing format.\nExample usage: scron -t \"23 Jan @ 8:30 AM\" -f file.txt")
-    exit()
+    exit(200)
 
 time_list[0] = str(minute)
 
