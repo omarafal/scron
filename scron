@@ -40,15 +40,15 @@ purge() {
 	# if no crontab file found
 	if [ ! $? -eq 0 ]
 	then
-		echo "No scheduled commands found for this user."
-		exit
+		echo "No scheduled commands in crontab found for this user, clearing scron files anyway."
+		#exit
 	fi
 
 	verbose_clear=$s_path/commands/verbose_cmds.scron
 	short_clear=$s_path/commands/short_cmds.scron
 	
 	# prompt for confirmation and create backup
-	read -p "Are you sure you want to remove ALL the currently sgicheduled commands?(Y/n): " do_clear
+	read -p "Are you sure you want to remove ALL the currently scheduled commands?(Y/n): " do_clear
 	
 	if [[ $do_clear != 'Y' ]]
 	then
