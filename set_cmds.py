@@ -13,14 +13,14 @@ def set(file_cmd, time, directory, is_cmd="no"):
     # write to temp files first
     with open(f"{directory}/commands/verbose_cmds.tmp", "w") as f1, open(f"{directory}/commands/short_cmds.tmp", "w") as f2:
         # log dates
-        f1.write(f"{time} date +'[%a %I:%M:%S]' >> {directory}/logs/scron_output.log && date >> {directory}/logs/scron_error.log\n")
+        f1.write(f"{time} date +'[%a %I:%M:%S]' > >(tee -a {directory}/logs/scron_output.log) && date > >(tee -a {directory}/logs/scron_error.log)\n")
        
         if is_cmd == "no":
             for line in lines:
                 # ignore empty lines:
                 if line.strip() != "":
                     #print(f"{line} >> ./logs/scron_commands.log\n")
-                    f1.write(f"{time} {line} >> {directory}/logs/scron_output.log 2>> {directory}/logs/scron_error.log\n")
+                    f1.write(f"{time} {line} > >(tee -a {directory}/logs/scron_output.log) 2> >(tee -a {directory}/logs/scron_error.log)\n")
 
                     # add commands to list of commands disregarding the logging part
                     # used for -l option
@@ -29,7 +29,7 @@ def set(file_cmd, time, directory, is_cmd="no"):
         elif is_cmd == "cmd":
             
             #print(f"{line} >> ./logs/scron_commands.log\n")
-            f1.write(f"{time} {line} >> {directory}/logs/scron_output.log 2>> {directory}/logs/scron_error.log\n")
+            f1.write(f"{time} {line} > >(tee -a {directory}/logs/scron_output.log) 2> >(tee -a {directory}/logs/scron_error.log)\n")
 
             # add commands to list of commands disregarding the logging part
             # used for -l option
