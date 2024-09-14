@@ -3,9 +3,14 @@ import set_cmds
 
 #content = sys.stdin.read()
 
-file = sys.argv[1]
+file_cmd = sys.argv[1]
 time = sys.argv[2].lower()
 directory = sys.argv[3]
+try:
+    is_cmd = sys.argv[4]
+except:
+    is_cmd = "no"
+
 
 time_list =  ["*", "*", "*", "*", "*"]
 
@@ -111,6 +116,6 @@ if hour == 12:
 else:
     time_list[1] = str(hour + period)
 
-set_cmds.set(file, " ".join(time_list), directory)
+set_cmds.set(file_cmd, " ".join(time_list), directory, is_cmd)
 
 #print(f"Final form: {" ".join(time_list)}")

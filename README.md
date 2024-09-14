@@ -6,7 +6,8 @@
 #### Basic command syntax
 `1`: Invalid option\
 `2`: Incomplete command\
-`4`: Missing arguments for an option
+`4`: Missing arguments for an option\
+`5`: Invalid command syntax
 
 #### Cancel
 `101`: Abort/Cancel

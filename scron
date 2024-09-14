@@ -27,6 +27,7 @@ print_help() {
 	echo -e "  -r\trestore the scron file to the last state it was in"
 }
 
+# clear out scron and crontab files
 purge() {
 
 	crontab -l > /dev/null 2>&1
@@ -83,45 +84,61 @@ purge() {
 	exit 0
 }
 
+inner_set() {
+
+	crontab -T $s_path/commands/verbose_cmds.tmp > /dev/null 2>&1
+	# check if crontab is successful then copy to original files from temp
+	if [ $? -eq 0 ]
+	then
+		cat $s_path/commands/verbose_cmds.tmp >> $s_path/commands/verbose_cmds.scron
+		cat $s_path/commands/short_cmds.tmp >> $s_path/commands/short_cmds.scron
+				
+		cat $s_path/commands/verbose_cmds.scron >> $s_path/commands/current.bkup
+
+		# make crontab read the file
+		crontab $s_path/commands/verbose_cmds.scron > /dev/null 2>&1
+
+		# check for logs directory
+		if [ ! -d $s_path/logs ]
+		then
+			mkdir $s_path/logs
+		fi
+
+		echo "Successfully scheduled provided commands."
+		echo "You can view all the scheduled commands by scron -l"
+		exit 0
+	else
+		echo "[ERROR] Something went wrong, please check your commands' syntax." >&2
+		exit 201
+	fi
+}
+
 # handle commands file
 set_cmds(){
 	#cat $1
 	#file_content=$(cat $1)
-
-	if [ -f $1 ]
+	
+	# check if file or command
+	if [[ $cmd != null ]]
 	then
-		#echo "File exists."
-		#cat $1 | python3 $s_path/parse_content.py
-		# send file name and time to python
-		python3 $s_path/parse_content.py $1 "$2" $3
-		#echo "EXIT CODE FROM PYTHON: $?"
+		python3 $s_path/parse_content.py $1 "$2" "$3" "cmd"
 
 		if [ $? -eq 0 ]
 		then
-			crontab -T $s_path/commands/verbose_cmds.tmp > /dev/null 2>&1
-			# check if crontab is successful then copy to original files from temp
-			if [ $? -eq 0 ]
-			then
-				cat $s_path/commands/verbose_cmds.tmp >> $s_path/commands/verbose_cmds.scron
-				cat $s_path/commands/short_cmds.tmp >> $s_path/commands/short_cmds.scron
-				
-				# make crontab read the file
-				crontab $s_path/commands/verbose_cmds.scron > /dev/null 2>&1
+			inner_set
+		fi
+		exit
+	fi
 
-				# check for logs directory
-				if [ ! -d $s_path/logs ]
-				then
-					mkdir $s_path/logs
-				fi
+	if [ -f $1 ]
+	then
+		
+		# send file name and time to python
+		python3 $s_path/parse_content.py $1 "$2" $3
 
-				echo "Successfully scheduled provided commands."
-				echo "You can view all the scheduled commands by scron -l"
-				exit 0
-			else
-				echo "[ERROR] Something went wrong, please check your commands' syntax." >&2
-				exit 201
-			fi
-			
+		if [ $? -eq 0 ]
+		then
+			inner_set
 		fi
 	else
 		echo "[ERROR] No such file found." >&2
@@ -147,17 +164,15 @@ list() {
 # restore scron file to the last state in case it was tampered with
 restore() {
 
-	# I just realised I can use the temp file to restore the state (it's 4 am here forgive me)
-	# Also this feature is kinda useless and its main functionality is not to just restore the last state
-	# since I can also tamper with the temp file, but maybe later.
+	# This feature is kinda useless for now but its main functionality is yet to be made
 
-	if [ ! -s $s_path/commands/verbose_cmds.tmp ]
+	if [ ! -s $s_path/commands/current.bkup ]
 	then
 		echo "[ERROR] No backup found, you have to first schedule commands."
 		exit 204
 	fi
 
-	cat $s_path/commands/verbose_cmds.tmp > $s_path/commands/verbose_cmds.scron
+	cat $s_path/commands/current.bkup > $s_path/commands/verbose_cmds.scron
 	
 	echo "Successfully restored the scron file to its last state."
 	exit 0
@@ -166,9 +181,10 @@ restore() {
 # variables
 time=null
 file=null
+cmd=null # this var is for one line command
 
 # options
-while getopts ":hf:plt:r" opt
+while getopts ":hf:plt:rc:" opt
 do
 	case $opt in
 		h) print_help && exit 0;;
@@ -177,6 +193,7 @@ do
 		l) list;; 
 		t) time=$OPTARG;;
 		r) restore ;;
+		c) cmd=$OPTARG ;;
 		:) echo "[ERROR] scron -$OPTARG requires argument(s)" >&2; exit 4 ;;
 		\?) echo -e "[ERROR] Invalid option\n" >&2 && print_help ; exit 1;;
 		*) echo "Error" && exit 255
@@ -184,11 +201,32 @@ do
 done
 
 # check variables are set
-if [[ $file == null || $time == null ]]
+
+if [[ $time != null ]]
 then
-	echo "[ERROR] Missing file or time arguments." >&2
+	if [[ $file == null ]]
+	then
+		if [[ $cmd == null ]]
+		then
+			echo "[ERROR] Missing file/command or time arguments." >&2
+			echo "Example usage: scron -t \"23 Jan @ 8:30 AM\" -f file.txt "
+			exit 2
+		else
+			set_cmds "$cmd" "$time" $s_path
+		fi
+	else
+		if [[ $cmd != null ]]
+		then
+			echo "[ERROR] Invalid command syntax" >&2
+			echo "Don't use -c and -f together, please refer to examples in the documentation."
+			exit 5
+		else
+			set_cmds "$file" "$time" $s_path
+		fi
+	fi
+else
+	echo "[ERROR] Missing file/command or time arguments." >&2
 	echo "Example usage: scron -t \"23 Jan @ 8:30 AM\" -f file.txt "
 	exit 2
 fi
 
-set_cmds $file "$time" $s_path
