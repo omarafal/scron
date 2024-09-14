@@ -1,5 +1,7 @@
 # Simple `cron`
 
+`scron` is not responsible for command syntax or date correctness (ex: 31 Sep which doesn't exist)
+
 ### Exit codes:
 #### Basic command syntax
 `1`: Invalid option\
@@ -15,3 +17,5 @@
 `203`: No file found\
 `204`: No scheduled commands found\
 `255`: Unknown error
+
+#### Examples

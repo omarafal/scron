@@ -24,19 +24,7 @@ print_help() {
 	echo -e "  -l\tlist scheduled commands"
 	echo -e "  -t\tset time for scheduled commands"
 	echo -e "  -c\tschedule a single command"
-	echo -e "  -r\trestore the crontab file to the last state it was in"
-	#echo -e "  -e\tevery; run command(s) every provided time"
-	
-	#echo "\n"
-	#echo "Example time formats:"
-	#echo "23 Jan @ 8:30 PM -> runs every 23rd of January on 8:30 pm."
-	#echo "23 @ 8:30 PM -> runs every 23rd of every month on 8:30 pm."  
-	#echo "Sat Jan @ 8:30 PM -> runs every Saturday of every month on 8:30 pm."
-	#echo "Sat @ 8:30 PM -> runs every Saturday of every month on 8:30 pm."
-      	#please refer to the man page or documentation
-	# scron is not responsible for command syntax or date correctness (eg: 31 Sep which doesn't exist)
-	# echo "Sat @ every-day also every-boot, every-minute, every-hour"
-	# echo "Jun @ time" means every day for the month of Jun	
+	echo -e "  -r\trestore the scron file to the last state it was in"
 }
 
 purge() {
@@ -116,8 +104,16 @@ set_cmds(){
 			then
 				cat $s_path/commands/verbose_cmds.tmp >> $s_path/commands/verbose_cmds.scron
 				cat $s_path/commands/short_cmds.tmp >> $s_path/commands/short_cmds.scron
-				# now make crontab read the file
+				
+				# make crontab read the file
 				crontab $s_path/commands/verbose_cmds.scron > /dev/null 2>&1
+
+				# check for logs directory
+				if [ ! -d $s_path/logs ]
+				then
+					mkdir $s_path/logs
+				fi
+
 				echo "Successfully scheduled provided commands."
 				echo "You can view all the scheduled commands by scron -l"
 				exit 0
@@ -134,9 +130,8 @@ set_cmds(){
 
 }
 
+# list all scheduled commands
 list() {
-	
-
 	# check if file is empty
 	if [ ! -s $s_path/commands/short_cmds.scron ]
 	then
@@ -149,13 +144,31 @@ list() {
 	exit 0
 }
 
+# restore scron file to the last state in case it was tampered with
+restore() {
+
+	# I just realised I can use the temp file to restore the state (it's 4 am here forgive me)
+	# Also this feature is kinda useless and its main functionality is not to just restore the last state
+	# since I can also tamper with the temp file, but maybe later.
+
+	if [ ! -s $s_path/commands/verbose_cmds.tmp ]
+	then
+		echo "[ERROR] No backup found, you have to first schedule commands."
+		exit 204
+	fi
+
+	cat $s_path/commands/verbose_cmds.tmp > $s_path/commands/verbose_cmds.scron
+	
+	echo "Successfully restored the scron file to its last state."
+	exit 0
+}
+
 # variables
 time=null
 file=null
 
-
 # options
-while getopts ":hf:plt:" opt
+while getopts ":hf:plt:r" opt
 do
 	case $opt in
 		h) print_help && exit 0;;
@@ -163,6 +176,7 @@ do
 		p) purge;;
 		l) list;; 
 		t) time=$OPTARG;;
+		r) restore ;;
 		:) echo "[ERROR] scron -$OPTARG requires argument(s)" >&2; exit 4 ;;
 		\?) echo -e "[ERROR] Invalid option\n" >&2 && print_help ; exit 1;;
 		*) echo "Error" && exit 255
