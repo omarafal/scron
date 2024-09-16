@@ -119,9 +119,9 @@ set_cmds(){
 	#file_content=$(cat $1)
 	
 	# check if file or command
-	if [[ $cmd != null ]]
+	if [[ "$cmd" != null ]]
 	then
-		python3 $s_path/parse_content.py $1 "$2" "$3" "cmd"
+		python3 $s_path/parse_content.py "$1" "$2" "$3" "cmd"
 
 		if [ $? -eq 0 ]
 		then
@@ -193,7 +193,7 @@ do
 		l) list;; 
 		t) time=$OPTARG;;
 		r) restore ;;
-		c) cmd=$OPTARG ;;
+		c) cmd="$OPTARG" ;;
 		:) echo "[ERROR] scron -$OPTARG requires argument(s)" >&2; exit 4 ;;
 		\?) echo -e "[ERROR] Invalid option\n" >&2 && print_help ; exit 1;;
 		*) echo "Error" && exit 255
