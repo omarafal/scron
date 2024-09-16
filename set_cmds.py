@@ -13,8 +13,11 @@ def set(file_cmd, time, directory, is_cmd="no"):
     # write to temp files first
     with open(f"{directory}/commands/verbose_cmds.tmp", "w") as f1, open(f"{directory}/commands/short_cmds.tmp", "w") as f2:
         # log dates
-        f1.write(f"{time} date +'[%a %I:%M:%S]' > >(tee -a {directory}/logs/scron_output.log) && date > >(tee -a {directory}/logs/scron_error.log)\n")
-       
+        try:
+            f1.write(f"{time} date +'[\%a \%I:\%M:\%S]' > >(tee -a {directory}/logs/scron_output.log) > >(tee -a {directory}/logs/scron_error.log)\n")
+        except SyntaxWarning:
+            pass
+
         if is_cmd == "no":
             for line in lines:
                 # ignore empty lines:
