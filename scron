@@ -1,11 +1,25 @@
 #!/bin/bash
 
-# start logging
-#log_file="$s_path/logs/scron.log"
-#date_format="$(date +'[%a %I:%M:%S]')" 
-#echo $date_format >> $log_file 2>>&1
-
 s_path=$(dirname $(realpath $0))
+
+# check dependencies
+$s_path/install_depend.sh python
+
+if (( $? != 0 ))
+then
+	exit 1
+fi
+
+$s_path/install_depend.sh crontab
+
+if (( $? != 0 ))
+then
+	exit 1
+elif (( $? == 100 ))
+then
+	exit
+fi
+
 
 # check if command directory exists
 if [ ! -d $s_path/commands ]

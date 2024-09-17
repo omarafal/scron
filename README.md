@@ -24,7 +24,11 @@ Period of the time `am/pm`
 
 <mark>`scron` is not responsible for scheduled commands' syntax or date correctness (ex: 31 Sep which doesn't exist).</mark>
 
-### Exit codes:
+### Dependencies
+- `crontab` for Debian-based or `cronie` for Arch-based machines.
+- `python`
+
+### Exit codes
 Below are a few exit codes to identify what kind of problem `scron` might have run into.
 #### Basic command syntax
 `1`: Invalid option\
