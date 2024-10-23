@@ -3,7 +3,7 @@
 It also adds logging for the commands scheduled and adds the ability to schedule multiple commands together to be executed at the same specified time.
 
 The main syntax goes as follows (see some examples below):\
-`scron -t "DAY MONTH @ DIGITAL_TIME PERIOD" -f FILE_NAME` or `-c COMMAND`\ where you can choose to either specify a bunch of commands in a file to be scheduled together or schedule one commands right away.
+`scron -t "DAY MONTH @ DIGITAL_TIME PERIOD" -f FILE_NAME` or `-c COMMAND` where you can choose to either specify a bunch of commands in a file to be scheduled together or schedule one commands right away.
 
 Run `scron -h` to view all available options.
 
